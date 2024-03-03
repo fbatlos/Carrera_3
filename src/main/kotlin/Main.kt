@@ -18,30 +18,38 @@ fun Float.redondear(posiciones: Int): Float {
  * los resultados al finalizar.
  */
 fun main() {
+    try {
+        val carrera = Carrera("Gran Carrera de Filigranas", 1000f)
 
-    val vehiculos = listOf(
-        Automovil("Pepe"),
-        Motocicleta("Fénix"),
-        Camion("Jose"),
-        Quad("Pepi")
-    )
+        println("\n*** ${carrera.nombreCarrera} ***\n")
+        carrera.iniciarCarrera()
 
-    vehiculos.shuffled()
+        val resultados = carrera.obtenerResultados()
 
+        println("* Clasificación:\n")
+        resultados.forEach { println("${it.posicion} -> ${it.vehiculo.nombre} (${it.vehiculo.kilometrosActuales} kms)") }
 
-    val carrera = Carrera("Gran Carrera de Filigranas", 1000f, vehiculos)
+        println("\n" + resultados.joinToString("\n") { it.toString() })
 
-    println("\n*** ${carrera.nombreCarrera} ***\n")
-    carrera.iniciarCarrera()
+        println("\n* Historial Detallado:\n")
+        resultados.forEach { println("${it.posicion} -> ${it.vehiculo.nombre}\n${it.historialAcciones.joinToString("\n")}\n") }
 
-    val resultados = carrera.obtenerResultados()
-
-    println("* Clasificación:\n")
-    resultados.forEach { println("${it.posicion} -> ${it.vehiculo.nombre} (${it.vehiculo.kilometrosActuales} kms)") }
-
-    println("\n" + resultados.joinToString("\n") { it.toString() })
-
-    println("\n* Historial Detallado:\n")
-    resultados.forEach { println("${it.posicion} -> ${it.vehiculo.nombre}\n${it.historialAcciones.joinToString("\n")}\n") }
+    }catch (_:NumberFormatException){
+        println("**ERROR** Numero no valido.")
+    }
+    catch (_:IllegalStateException){
+        println("**ERROR** Nombre en blanco.")
+    }
+    catch (_:IllegalArgumentException){
+        println("**ERROR** Datos invalidos introducidos.")
+    }
 }
 
+
+fun String.normalizar(): String {
+    val frase = this
+    val fraseSinEspacio = frase.trim()
+    val cadaPalabra = fraseSinEspacio.split(" ").filter { it.isNotEmpty() }
+    val palabrasCapitalizadas = cadaPalabra.map { it.replaceFirstChar { it.uppercase() } }
+    return palabrasCapitalizadas.joinToString(" ")
+}

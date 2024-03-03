@@ -1,4 +1,5 @@
 import kotlin.math.ceil
+import kotlin.random.Random
 
 /**
  * Representa una carrera que incluye múltiples vehículos como participantes. La carrera tiene un nombre, una distancia total
@@ -11,13 +12,15 @@ import kotlin.math.ceil
 class Carrera(
     val nombreCarrera: String,
     private val distanciaTotal: Float,
-    private val participantes: List<Vehiculo> = listOf()
+
 ) {
+    private val participantes: MutableList<Vehiculo> = mutableListOf()
     private val historialAcciones = mutableMapOf<String, MutableList<String>>()
     private var estadoCarrera = false // Indica si la carrera está en curso o ha finalizado.
     private val posiciones = mutableMapOf<String, Float>()
 
     init {
+        IntroducirParticipantes()
         require(distanciaTotal >= 1000) { "La distancia total de la carrera debe ser al menos 1000 km." }
         participantes.forEach { vehiculo -> inicializaDatosParticipante(vehiculo) }
     }
@@ -25,6 +28,38 @@ class Carrera(
     companion object {
         private const val KM_PARA_FILIGRANA = 20f // Cada 20 km, se realiza una filigrana.
     }
+
+    fun IntroducirParticipantes(){
+        print("Introduce el número de participantes: ")
+        val numeroParticipantes = readln().toInt()
+
+        for (contador  in 1..numeroParticipantes){
+            print("\n* Nombre del vehículo $contador -> ")
+            val nombre = readln()
+            if (nombre.isEmpty()){
+                error("")
+            }
+            participantes.add(SeleccionDeVehiculo(nombre))
+            println("Te ha tocado un Automóvil ${participantes[contador-1]}")
+        }
+    }
+
+    fun SeleccionDeVehiculo(nombre:String):Vehiculo{
+        val seleccion = listOf(Quad::class,Automovil::class,Motocicleta::class,Camion::class)[Random.nextInt(0,3)]
+        return when(seleccion){
+            Quad::class -> Quad(nombre.normalizar())
+
+            Automovil::class -> Automovil(nombre.normalizar())
+
+            Motocicleta::class -> Motocicleta(nombre.normalizar())
+
+            Camion::class -> Camion(nombre.normalizar())
+
+            else -> {return error("")
+            }
+        }
+    }
+
 
     /**
      * Representa el resultado final de un vehículo en la carrera, incluyendo su posición final, el kilometraje total recorrido,

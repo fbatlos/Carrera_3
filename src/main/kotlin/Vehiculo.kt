@@ -30,12 +30,15 @@ open class Vehiculo(
         }
 
     init {
+        require(!comprobarNombre(this.nombre)){"El nombre está repetido."}
         require(capacidadCombustible > 0) { "La capacidad del tanque debe ser un valor positivo." }
         require(combustibleActual >= 0) { "El combustible actual no puede ser negativo." }
     }
 
     companion object {
         const val KM_POR_LITRO = 10.0f // 10 KM por litro.
+        private val listadonombres:MutableSet<String> = mutableSetOf()
+        private fun comprobarNombre(nombre: String) = !listadonombres.add(nombre)
     }
 
     /**
