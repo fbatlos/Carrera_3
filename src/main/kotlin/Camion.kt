@@ -12,6 +12,10 @@ class Camion(nombre: String,
         else
             ((combustibleActual * (KM_POR_LITRO_Camion-(Peso/1000)*0.2))).toFloat().redondear(2)
 
+    override fun obtenerInformacion(): String {
+        return "$nombre Camión(km = ${kilometrosActuales.redondear(2)} , cobustible = ${combustibleActual.redondear(2)})"
+    }
+
     override fun toString(): String {
         return "Camión(nombre=$nombre, marca=$marca, modelo=$modelo, capacidadCombustible=$capacidadCombustible, combustibleActual=$combustibleActual, kilometrosActuales=$kilometrosActuales, Peso=$Peso)"
     }

@@ -72,6 +72,10 @@ open class Automovil(
         }
     }
 
+    override fun obtenerInformacion(): String {
+        return "$nombre Automovi(km = ${kilometrosActuales.redondear(2)} , cobustible = ${combustibleActual.redondear(2)})"
+    }
+
     /**
      * Sobrescribe el método toString de la clase [Vehiculo] para proporcionar una representación en cadena de texto
      * específica del automóvil, incluyendo su estado de ser eléctrico además de los detalles heredados de Vehiculo.

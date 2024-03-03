@@ -8,9 +8,12 @@ class Quad(
         return (super.calcularAutonomia()/2)
     }
 
+    override fun obtenerInformacion(): String {
+        return "$nombre Quad(km = ${kilometrosActuales.redondear(2)} , cobustible = ${combustibleActual.redondear(2)})"
+    }
 
     override fun toString(): String {
-        return "Motocicleta(nombre=$nombre, marca=$marca, modelo=$modelo, capacidadCombustible=$capacidadCombustible, combustibleActual=$combustibleActual, kilometrosActuales=$kilometrosActuales, cilindrada=$cilindrada , Tipo = $TipoQuad)"
+        return "Quad(nombre=$nombre, marca=$marca, modelo=$modelo, capacidadCombustible=$capacidadCombustible, combustibleActual=$combustibleActual, kilometrosActuales=$kilometrosActuales, cilindrada=$cilindrada , Tipo = $TipoQuad)"
     }
 
 }

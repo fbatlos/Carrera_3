@@ -52,6 +52,10 @@ open class Motocicleta(
         combustibleActual -= combustibleGastado.redondear(2)
     }
 
+    override fun obtenerInformacion(): String {
+        return "$nombre Motocicleta(km = ${kilometrosActuales.redondear(2)} , cobustible = ${combustibleActual.redondear(2)})"
+    }
+
     /**
      * Sobrescribe el método toString de la clase [Vehiculo] para ofrecer una representación textual de la
      * motocicleta que incluye su cilindrada, además de los atributos heredados de la clase base.

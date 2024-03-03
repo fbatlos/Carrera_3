@@ -14,7 +14,8 @@ class Carrera(
     private val distanciaTotal: Float,
 
 ) {
-    private val participantes: MutableList<Vehiculo> = mutableListOf()
+    var contadorDeRepostado = mutableMapOf<String,Int>()
+    private var participantes: MutableList<Vehiculo> = mutableListOf()
     private val historialAcciones = mutableMapOf<String, MutableList<String>>()
     private var estadoCarrera = false // Indica si la carrera está en curso o ha finalizado.
     private val posiciones = mutableMapOf<String, Float>()
@@ -45,7 +46,7 @@ class Carrera(
     }
 
     fun SeleccionDeVehiculo(nombre:String):Vehiculo{
-        val seleccion = listOf(Quad::class,Automovil::class,Motocicleta::class,Camion::class)[Random.nextInt(0,3)]
+        val seleccion = listOf(Quad::class,Automovil::class,Motocicleta::class,Camion::class)[Random.nextInt(0,4)]
         return when(seleccion){
             Quad::class -> Quad(nombre.normalizar())
 
@@ -75,7 +76,7 @@ class Carrera(
         val vehiculo: Vehiculo,
         val posicion: Int,
         val kilometraje: Float,
-        val paradasRepostaje: Int,
+        val paradasRepostaje: Int?,
         val historialAcciones: List<String>
     )
 
@@ -109,15 +110,22 @@ class Carrera(
     fun iniciarCarrera() {
         println("¡Comienza la carrera!")
 
+        var contadorDeRondas = 0
+        var contadorDeCiclos = 3
         estadoCarrera = true // Indica que la carrera está en curso.
         while (estadoCarrera) {
-
+            contadorDeRondas++
             Thread.sleep(100)
             print(".")
 
             val vehiculoSeleccionado = seleccionaVehiculoQueAvanzara()
             avanzarVehiculo(vehiculoSeleccionado)
-
+            when{
+                contadorDeCiclos == contadorDeRondas -> {
+                    informacionDeRondas(contadorDeRondas)
+                    contadorDeCiclos += 3
+                }
+            }
             val vehiculoGanador = determinarGanador()
             if (vehiculoGanador != null) {
                 estadoCarrera = false
@@ -128,13 +136,35 @@ class Carrera(
         }
     }
 
+    fun informacionDeRondas(Ronda:Int){
+        println("\n*** CLASIFICACIÓN PARCIAL (ronda $Ronda) ***")
+
+
+        //Seleccionamos el parametro para comparar
+        val comparador = compareBy<Vehiculo> {it.kilometrosActuales}
+        //Ordenamos la lista segun el parametro sekleccionado
+        participantes = participantes.sortedWith( comparador).toMutableList()
+        participantes = participantes.reversed().toMutableList()
+        var posiciones = 0
+        //recorremos la lista ordenada segun los kilometros actuales de vehiculo y le asignamos una posicion.
+        for (vehiculo in participantes){
+            posiciones++
+            println("$posiciones. ${vehiculo.obtenerInformacion()}\n")
+        }
+
+        println("\n********************************************************")
+
+    }
+
+
+
     /**
      * Selecciona aleatoriamente un vehículo participante para avanzar en la carrera. Este método se utiliza dentro
      * del proceso de la carrera para decidir qué vehículo realiza el próximo movimiento.
      *
      * @return El [Vehiculo] seleccionado para avanzar.
      */
-    private fun seleccionaVehiculoQueAvanzara() = participantes.random()
+     fun seleccionaVehiculoQueAvanzara() = participantes.random()
 
     /**
      * Calcula el número de tramos o segmentos en los que se divide la distancia que un vehículo intenta recorrer.
@@ -205,6 +235,7 @@ class Carrera(
         // Si le queda alguna distancia por recorrer debe repostar
         while (distanciaRestante > 0) {
             val repostado = vehiculo.repostar() // Llenamos el tanque
+            contadorDeRepostado.compute(vehiculo.nombre){ _,paradasARepostar-> (paradasARepostar?:0) + 1 }
             registrarAccion(vehiculo.nombre, "Repostaje tramo: $repostado L")
 
             // Necesitamos de nuevo una distancia para después compararla con la distanciaRestante que devuelve realizarViaje()
@@ -221,7 +252,7 @@ class Carrera(
      *
      * @return [Boolean] Verdadero si el vehículo debe realizar una filigrana, falso en caso contrario.
      */
-    private fun comprobarSiTocaHacerFiligrana() = (Math.random() < 0.5)
+    private fun comprobarSiTocaHacerFiligrana() = (Random.nextInt(0,3))
 
     /**
      * Intenta que un vehículo realice una filigrana durante su avance en la carrera. La filigrana
@@ -231,9 +262,9 @@ class Carrera(
      */
     private fun realizarFiligrana(vehiculo: Vehiculo) {
         // Lógica para realizar filigranas de motociletas y automovil y registrarlas. Se hará o no aleatoriamente.
-        if (comprobarSiTocaHacerFiligrana()) {
+        for (i in 1..comprobarSiTocaHacerFiligrana()) {
             val combustibleRestante: Float
-
+            if (comprobarSiTocaHacerFiligrana() == 0){break}
             if (vehiculo is Automovil) {
                 combustibleRestante = vehiculo.realizaDerrape()
                 registrarAccion(vehiculo.nombre, "Derrape: Combustible restante $combustibleRestante L.")
@@ -255,6 +286,7 @@ class Carrera(
         val kilometrosRecorridos = posiciones[nombreVehiculo] ?: 0f
         posiciones[nombreVehiculo] = kilometrosRecorridos + kilometraje
     }
+
 
     /**
      * Determina si hay un ganador de la carrera, basado en si algún vehículo ha alcanzado la distancia
@@ -291,22 +323,21 @@ class Carrera(
      */
     fun obtenerResultados(): List<ResultadoCarrera> {
         val resultados = mutableListOf<ResultadoCarrera>()
-
         posiciones.toList().sortedByDescending { it.second }.forEachIndexed { posicion, (nombre, kilometraje) ->
             val vehiculo = participantes.find { it.nombre == nombre }
-            val paradasRepostaje = historialAcciones[nombre]?.count { it.contains("Repostaje") } ?: 0
             val historial = historialAcciones[nombre] ?: emptyList()
 
-            if (vehiculo != null)
+            if (vehiculo != null){
                 resultados.add(
                     ResultadoCarrera(
                         vehiculo,
                         posicion + 1,
                         kilometraje,
-                        paradasRepostaje,
+                        contadorDeRepostado.get(nombre),
                         historial
                     )
                 )
+            }
         }
         return resultados
     }
