@@ -1,18 +1,17 @@
+import kotlin.random.Random
+import kotlin.random.Random.Default.nextInt
+
 /**
  * Representa una motocicleta, que es una especialización de [Vehiculo], con la adición de la cilindrada como propiedad única.
  *
  * @property cilindrada La cilindrada de la motocicleta.
  * @constructor Crea una motocicleta con los parámetros especificados, heredando propiedades y funcionalidades de [Vehiculo].
  */
-class Motocicleta(
+open class Motocicleta(
     nombre: String,
-    marca: String,
-    modelo: String,
-    capacidadCombustible: Float,
-    combustibleActual: Float,
-    kilometrosActuales: Float,
-    private val cilindrada: Int
-) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
+    capacidadCombustible: Float = nextInt(15,30).toFloat(),
+    val cilindrada: Int = listOf(125, 250, 400, 500, 750, 900 , 1000)[nextInt(0,6)]
+) : Vehiculo(nombre, capacidadCombustible = capacidadCombustible) {
 
     init {
         require(cilindrada in 125..1000) { "Una motocicleta debe tener entre 125 y 100 cc." }

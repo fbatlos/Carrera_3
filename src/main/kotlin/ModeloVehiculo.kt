@@ -1,0 +1,23 @@
+enum class ModeloVehiculo {
+    SEDAN,
+    HATCHBACK,
+    SUV,
+    CAMIONETA,
+    COUPE,
+    CONVERTIBLE,
+    FURGONETA,
+    PICKUP,
+    MONOVOLUMEN,
+    DEPORTIVO,
+    DESCAPOTABLE,
+    MINIVAN,
+    CROSSOVER,
+    TODO_TERRENO,
+    CAMION,
+    AUTOBUS,
+    MOTOCICLETA,
+    BICICLETA,
+    TRACTOR,
+    CAMIONETA_DE_CARGA,
+    VAN
+}

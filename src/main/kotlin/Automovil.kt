@@ -1,3 +1,5 @@
+import kotlin.random.Random
+
 /**
  * Representa un automóvil, que es una especialización de [Vehiculo], añadiendo la característica de si es eléctrico o no.
  *
@@ -6,13 +8,9 @@
  */
 open class Automovil(
     nombre: String,
-    marca: String,
-    modelo: String,
-    capacidadCombustible: Float,
-    combustibleActual: Float,
-    kilometrosActuales: Float,
-    private val esHibrido: Boolean
-) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
+    val esHibrido: Boolean = Random.nextBoolean(),
+    capacidadCombustible: Float= Random.nextInt(30,60).toFloat()
+) : Vehiculo(nombre, capacidadCombustible = capacidadCombustible ) {
 
     companion object {
         const val AHORRO_ELECTRICO = 5.0f // Si es eléctrico, asume un rendimiento de 5 km más por litro.

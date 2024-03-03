@@ -1,3 +1,4 @@
+import kotlin.random.Random
 
 /**
  * Representa un vehículo genérico con propiedades básicas y funcionalidades para calcular la autonomía, realizar viajes,
@@ -13,11 +14,11 @@
  */
 open class Vehiculo(
     val nombre: String,
-    protected val marca: String,
-    protected val modelo: String,
     capacidadCombustible: Float,
-    combustibleActual: Float,
-    var kilometrosActuales: Float
+    protected val marca: String = MarcaDeVehiculo.values().toList()[Random.nextInt(0,20)].toString(),
+    protected val modelo: String = ModeloVehiculo.values().toList()[Random.nextInt(0,20)].toString(),
+    combustibleActual: Float = Random.nextInt(5,capacidadCombustible.toInt()).toFloat(),
+    var kilometrosActuales: Float = 0f
 ) {
 
     protected val capacidadCombustible = capacidadCombustible.redondear(2)
