@@ -19,9 +19,14 @@ fun Float.redondear(posiciones: Int): Float {
  */
 fun main() {
 
-    val vehiculos = listOf( Motocicleta("Fénix", "Honda", "Vital", 20f, 20f * 0.1f, 0f, 250)
+    val vehiculos = listOf(
+        Automovil("Pepe"),
+        Motocicleta("Fénix"),
+        Camion("Jose"),
+        Quad("Pepi")
     )
 
+    vehiculos.shuffled()
 
 
     val carrera = Carrera("Gran Carrera de Filigranas", 1000f, vehiculos)
